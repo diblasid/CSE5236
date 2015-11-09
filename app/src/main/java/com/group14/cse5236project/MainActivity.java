@@ -13,20 +13,37 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 
-public class MainActivity extends FragmentActivity{
+public class MainActivity extends Activity implements View.OnClickListener{
 
     private final String TAG = "MainActivity:";
+    private ParseUser user;
+    RelativeLayout firstName, lastName, email;
+    Button login, createAccount, register;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Debug.startMethodTracing("Main Create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Debug.stopMethodTracing();
 
         Log.d(TAG, "Created.");
+
+
+        login = (Button)findViewById(R.id.login_button);
+        createAccount = (Button)findViewById(R.id.create_button);
+        login.setOnClickListener(this);
+        createAccount.setOnClickListener(this);
     }
 
     @Override
@@ -116,4 +133,65 @@ public class MainActivity extends FragmentActivity{
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onClick(View v){
+
+        switch(v.getId()){
+            case R.id.login_button:
+                user.logInInBackground(((EditText) findViewById(R.id.username_edit)).getText().toString(), ((EditText) findViewById(R.id.password_edit)).getText().toString(), new LogInCallback() {
+                    @Override
+                    public void done(ParseUser user, ParseException e) {
+                        if (e == null) {
+                            Intent i = new Intent(MainActivity.this, HomeActivity.class);
+                            startActivity(i);
+                        } else {
+                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+                });
+
+                break;
+            case R.id.create_button:
+                firstName = (RelativeLayout)findViewById(R.id.first_name);
+                lastName = (RelativeLayout)findViewById(R.id.last_name);
+                email = (RelativeLayout)findViewById(R.id.email);
+                register = (Button)findViewById(R.id.register_button);
+
+                firstName.setVisibility(View.VISIBLE);
+                lastName.setVisibility(View.VISIBLE);
+                email.setVisibility(View.VISIBLE);
+                register.setVisibility(View.VISIBLE);
+                login.setVisibility(View.GONE);
+                createAccount.setVisibility(View.GONE);
+
+                register.setOnClickListener(this);
+
+                break;
+            case R.id.register_button:
+                user = new ParseUser();
+                user.setUsername(((EditText) findViewById(R.id.username_edit)).getText().toString());
+                user.setPassword(((EditText) findViewById(R.id.password_edit)).getText().toString());
+                user.setEmail(((EditText) findViewById(R.id.email_edit)).getText().toString());
+                user.put("first", ((EditText) findViewById(R.id.first_name_edit)).getText().toString());
+                user.put("last", ((EditText)findViewById(R.id.last_name_edit)).getText().toString());
+                user.signUpInBackground(new SignUpCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                        }else{
+                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+                break;
+
+        }
+
+    }
+
 }

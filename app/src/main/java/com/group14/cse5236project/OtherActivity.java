@@ -2,6 +2,7 @@ package com.group14.cse5236project;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Debug;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +13,7 @@ import android.view.View;
 
 public class OtherActivity extends Activity {
 
-    private final String TAG = "Other Activity:";
+    private final String TAG = "OtherActivity:";
 
     private boolean destroyed;
 
@@ -67,6 +68,9 @@ public class OtherActivity extends Activity {
 
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
+
+            Debug.stopMethodTracing();
+
 
         }
         this.finish();
