@@ -2,11 +2,20 @@ package com.group14.cse5236project;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity {
 
@@ -61,5 +70,33 @@ public class MapsActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Location");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if(e == null){
+                    for(int i = 0; i < objects.size(); i++){
+                        ParseObject location = objects.get(i);
+                        try {
+                            location.fetchIfNeeded();
+                            mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(location.getDouble("Lat"), location.getDouble("Lng")))
+                                            .title(location.getString("name"))
+                                            .snippet("Address: " + location.getString("address") + "\n"
+                                                    + "Phone: " + location.getString("phone") + "\n"
+                                                    + "Hours: " + location.getString("open") + " - " + location.getString("close"))
+                            );
+                        }catch(ParseException e1){
+                            Toast.makeText(getApplicationContext(), e1.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }else{
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+
+                }
+            }
+        });
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(39.999315, -83.011923), 14.5f));
+
     }
 }

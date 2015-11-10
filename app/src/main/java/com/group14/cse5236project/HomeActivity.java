@@ -58,6 +58,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
             case R.id.go_to_map:
                 Intent i = new Intent(HomeActivity.this, MapsActivity.class);
                 startActivity(i);
+                break;
 
         }
 
