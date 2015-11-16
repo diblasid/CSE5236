@@ -8,7 +8,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 /**
- * Created by diblasid on 11/8/15. test
+ * Created by diblasid on 11/8/15. testing vcs
  */
 public class App extends Application {
 
