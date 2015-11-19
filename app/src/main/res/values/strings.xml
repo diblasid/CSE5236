@@ -6,4 +6,5 @@
     <string name="title_activity_other">OtherActivity</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_location_list">LocationListActivity</string>
 </resources>

@@ -1,14 +1,24 @@
 package com.group14.cse5236project;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -70,6 +80,44 @@ public class MapsActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+
+        final Bitmap foodImage = BitmapFactory.decodeResource(getResources(), R.mipmap.foodicon);
+        final Bitmap shopImage = BitmapFactory.decodeResource(getResources(), R.mipmap.shop_icon);
+        final Bitmap educationImage = BitmapFactory.decodeResource(getResources(), R.mipmap.education_icon);
+        final Bitmap socialImage = BitmapFactory.decodeResource(getResources(), R.mipmap.social_icon);
+
+
+
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                Context context = getApplicationContext();
+                LinearLayout info = new LinearLayout(context);
+                info.setOrientation(LinearLayout.VERTICAL);
+
+                TextView title = new TextView(context);
+                title.setTextColor(Color.BLACK);
+                title.setGravity(Gravity.CENTER);
+                title.setTypeface(null, Typeface.BOLD);
+                title.setText(marker.getTitle());
+
+                TextView details = new TextView(context);
+                details.setTextColor(Color.GRAY);
+                details.setText(marker.getSnippet());
+
+                info.addView(title);
+                info.addView(details);
+
+                return info;
+            }
+        });
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Location");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -79,13 +127,39 @@ public class MapsActivity extends FragmentActivity {
                         ParseObject location = objects.get(i);
                         try {
                             location.fetchIfNeeded();
-                            mMap.addMarker(new MarkerOptions()
+                            Bitmap iconPointer = foodImage;
+                            switch(location.getString("type")){
+                                case "food":
+                                    iconPointer = foodImage;
+                                    break;
+                                case "shop":
+                                    iconPointer = shopImage;
+                                    break;
+                                case "education":
+                                    iconPointer = educationImage;
+                                    break;
+                                case "social":
+                                    iconPointer = socialImage;
+                                    break;
+                            }
+
+
+                            Marker tempMarker = mMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(location.getDouble("Lat"), location.getDouble("Lng")))
                                             .title(location.getString("name"))
+                                            .icon(BitmapDescriptorFactory.fromBitmap(iconPointer))
                                             .snippet("Address: " + location.getString("address") + "\n"
                                                     + "Phone: " + location.getString("phone") + "\n"
                                                     + "Hours: " + location.getString("open") + " - " + location.getString("close"))
+
                             );
+
+
+                            if(location.getObjectId().equals(getIntent().getStringExtra("id"))){
+                                tempMarker.showInfoWindow();
+                            }
+
+
                         }catch(ParseException e1){
                             Toast.makeText(getApplicationContext(), e1.getMessage(), Toast.LENGTH_LONG).show();
                         }
@@ -96,7 +170,7 @@ public class MapsActivity extends FragmentActivity {
                 }
             }
         });
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(39.999315, -83.011923), 14.5f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(getIntent().getDoubleExtra("lat", 39.999315), getIntent().getDoubleExtra("lng", -83.011923)), 15.0f));
 
     }
 }

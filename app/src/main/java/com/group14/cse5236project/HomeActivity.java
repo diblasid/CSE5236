@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.group14.cse5236project.helpers.TypeHelper;
 import com.parse.ParseUser;
 
 
@@ -17,7 +18,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 
     private ParseUser user;
     private TextView greeting;
-    private Button goMap;
+    private Button goMap, goFood, goShop, goEducation, goSocial;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,14 @@ public class HomeActivity extends Activity implements View.OnClickListener {
         greeting.setText("Hello, " + user.getString("first"));
         goMap = (Button)findViewById(R.id.go_to_map);
         goMap.setOnClickListener(this);
+        goFood = (Button)findViewById(R.id.food_list);
+        goFood.setOnClickListener(this);
+        goShop = (Button)findViewById(R.id.shop_list);
+        goShop.setOnClickListener(this);
+        goEducation = (Button)findViewById(R.id.education_list);
+        goEducation.setOnClickListener(this);
+        goSocial = (Button)findViewById(R.id.social_list);
+        goSocial.setOnClickListener(this);
     }
 
     @Override
@@ -58,6 +67,26 @@ public class HomeActivity extends Activity implements View.OnClickListener {
             case R.id.go_to_map:
                 Intent i = new Intent(HomeActivity.this, MapsActivity.class);
                 startActivity(i);
+                break;
+            case R.id.food_list:
+                Intent i1 = new Intent(HomeActivity.this, LocationListActivity.class);
+                i1.putExtra("type", TypeHelper.FOOD_LOCATION);
+                startActivity(i1);
+                break;
+            case R.id.shop_list:
+                Intent i2 = new Intent(HomeActivity.this, LocationListActivity.class);
+                i2.putExtra("type", TypeHelper.SHOP_LOCATION);
+                startActivity(i2);
+                break;
+            case R.id.education_list:
+                Intent i3 = new Intent(HomeActivity.this, LocationListActivity.class);
+                i3.putExtra("type", TypeHelper.EDUCATION_LOCATION);
+                startActivity(i3);
+                break;
+            case R.id.social_list:
+                Intent i4 = new Intent(HomeActivity.this, LocationListActivity.class);
+                i4.putExtra("type", TypeHelper.SOCIAL_LOCATION);
+                startActivity(i4);
                 break;
 
         }
