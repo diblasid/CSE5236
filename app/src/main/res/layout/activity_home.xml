@@ -10,6 +10,7 @@
     <TextView android:text=""
         android:layout_width="wrap_content"
         android:id="@+id/greeting"
+        android:textSize="40dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"/>
 
@@ -23,15 +24,16 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center">
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/CategoryButton"
             android:id="@+id/food_list"
             android:text="Food"/>
 
         <Button
-            android:layout_width="wrap_content"
+            style="@style/CategoryButton"
+            android:layout_width="125dp"
             android:layout_height="wrap_content"
             android:id="@+id/shop_list"
             android:text="Shop"/>
@@ -41,18 +43,21 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center">
         <Button
-            android:layout_width="wrap_content"
+            style="@style/CategoryButton"
+            android:layout_width="125dp"
             android:layout_height="wrap_content"
             android:id="@+id/education_list"
             android:text="Education"/>
 
         <Button
-            android:layout_width="wrap_content"
+            style="@style/CategoryButton"
+            android:layout_width="125dp"
             android:layout_height="wrap_content"
             android:id="@+id/social_list"
-            android:text="Social"/>
+            android:text="Social" />
 
     </LinearLayout>
 

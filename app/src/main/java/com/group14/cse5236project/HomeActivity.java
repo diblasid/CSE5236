@@ -1,17 +1,22 @@
 package com.group14.cse5236project;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.group14.cse5236project.helpers.TypeHelper;
+import com.group14.cse5236project.helpers.MyParseHelper;
 import com.parse.ParseUser;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 
 public class HomeActivity extends Activity implements View.OnClickListener {
@@ -63,6 +68,7 @@ public class HomeActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v){
+
         switch (v.getId()){
             case R.id.go_to_map:
                 Intent i = new Intent(HomeActivity.this, MapsActivity.class);
@@ -70,26 +76,40 @@ public class HomeActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.food_list:
                 Intent i1 = new Intent(HomeActivity.this, LocationListActivity.class);
-                i1.putExtra("type", TypeHelper.FOOD_LOCATION);
+                i1.putExtra("type", MyParseHelper.FOOD_LOCATION);
                 startActivity(i1);
                 break;
             case R.id.shop_list:
                 Intent i2 = new Intent(HomeActivity.this, LocationListActivity.class);
-                i2.putExtra("type", TypeHelper.SHOP_LOCATION);
+                i2.putExtra("type", MyParseHelper.SHOP_LOCATION);
                 startActivity(i2);
                 break;
             case R.id.education_list:
                 Intent i3 = new Intent(HomeActivity.this, LocationListActivity.class);
-                i3.putExtra("type", TypeHelper.EDUCATION_LOCATION);
+                i3.putExtra("type", MyParseHelper.EDUCATION_LOCATION);
                 startActivity(i3);
                 break;
             case R.id.social_list:
                 Intent i4 = new Intent(HomeActivity.this, LocationListActivity.class);
-                i4.putExtra("type", TypeHelper.SOCIAL_LOCATION);
+                i4.putExtra("type", MyParseHelper.SOCIAL_LOCATION);
                 startActivity(i4);
                 break;
 
         }
 
+    }
+
+    public static boolean hasActiveInternetConnection(Context context) {
+            try {
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://www.google.com").openConnection());
+                urlc.setRequestProperty("User-Agent", "Test");
+                urlc.setRequestProperty("Connection", "close");
+                urlc.setConnectTimeout(1500);
+                urlc.connect();
+                return (urlc.getResponseCode() == 200);
+            } catch (IOException e) {
+                Toast.makeText(context, "You must have an internet connection.", Toast.LENGTH_LONG).show();
+            }
+        return false;
     }
 }

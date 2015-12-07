@@ -2,17 +2,19 @@ package com.group14.cse5236project;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.group14.cse5236project.helpers.TypeHelper;
+import com.group14.cse5236project.helpers.MyParseHelper;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -23,50 +25,69 @@ import java.util.List;
 public class LocationListActivity extends Activity {
 
     private TextView title;
+    private EditText search;
+    List<ParseObject> locations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
 
+        search = (EditText)findViewById(R.id.search_field);
         title = (TextView)findViewById(R.id.list_title);
 
-        switch(getIntent().getIntExtra("type", TypeHelper.ALL_LOCATION)){
-            case TypeHelper.FOOD_LOCATION:
+        //Determines type of locations to display based on passed in argument
+        switch(getIntent().getIntExtra("type", MyParseHelper.ALL_LOCATION)){
+            case MyParseHelper.FOOD_LOCATION:
                 title.setText("Where to find Food");
-                List<ParseObject> foodLocations = queryLocationType("food");
-                addLocationsToView(foodLocations);
+                locations = queryLocationType("food");
                 break;
-            case TypeHelper.SHOP_LOCATION:
+            case MyParseHelper.SHOP_LOCATION:
                 title.setText("Where to go Shopping");
-                List<ParseObject> shopLocations = queryLocationType("shop");
-                addLocationsToView(shopLocations);
+                locations = queryLocationType("shop");
                 break;
-            case TypeHelper.EDUCATION_LOCATION:
+            case MyParseHelper.EDUCATION_LOCATION:
                 title.setText("Where to go Study");
-                List<ParseObject> educationLocations = queryLocationType("education");
-                addLocationsToView(educationLocations);
+                locations = queryLocationType("education");
                 break;
-            case TypeHelper.SOCIAL_LOCATION:
+            case MyParseHelper.SOCIAL_LOCATION:
                 title.setText("Where to Meet People");
-                List<ParseObject> socialLocations = queryLocationType("social");
-                addLocationsToView(socialLocations);
+                locations = queryLocationType("social");
                 break;
-            case TypeHelper.ALL_LOCATION:
+            case MyParseHelper.ALL_LOCATION:
             default:
                 title.setText("All Locations");
-                List<ParseObject> allLocations = queryLocationType("all");
-                addLocationsToView(allLocations);
+                locations = queryLocationType("all");
                 break;
 
 
         }
+        addLocationsToView(locations);
 
+        //listen for changes in the search box to update results
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                addLocationsToView(MyParseHelper.filterLocations(locations, search.getText().toString()));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
     }
 
+
+    /*
+    *   Requests the list of locations of a certain type
+     */
     private List<ParseObject> queryLocationType(String type){
 
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Location");
@@ -82,9 +103,16 @@ public class LocationListActivity extends Activity {
         }
     }
 
+
+
+    /*
+    *   Creates a view for each location and adds it to list
+     */
     private void addLocationsToView(List<ParseObject> locations) {
 
         LinearLayout listOfLocations = (LinearLayout)findViewById(R.id.location_list);
+
+        listOfLocations.removeAllViews();
 
         for (final ParseObject location : locations){
 
@@ -131,12 +159,12 @@ public class LocationListActivity extends Activity {
             });
 
 
-            listLocationDetails.addView(tempName);
             //listLocationDetails.addView(tempAddress);
             listLocationDetails.addView(tempHours);
             listLocationDetails.addView(tempPhone);
             listLocationDetails.addView(goToMap);
 
+            listOfLocations.addView(tempName);
             listOfLocations.addView(listLocationDetails);
 
         }

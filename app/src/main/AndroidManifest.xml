@@ -58,10 +58,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".OtherActivity"
-            android:label="@string/title_activity_other" >
-        </activity>
-        <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home" >
         </activity>
